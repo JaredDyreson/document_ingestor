@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+function convert() {
+  if [ ! -f "$1" ]; then
+    echo "[-] $1 : file does not exist..."
+    exit
+  else
+    filename="${1%.*}"
+    echo "[+] Converting $filename ...."
+    unoconv -f pdf "$1"
+  fi
+}
+
+if [[ -d "$1" ]]; then
+  echo "[+] Processing dir: $1"
+  find . -iname '*.doc*' | while read foo; do
+    convert "$foo"
+  done
+elif [[ -f "$1" ]]; then
+  echo "[+] Processing one file: $1"
+  convert "$1"
+fi

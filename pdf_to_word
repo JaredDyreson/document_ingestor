@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+if [ -f ingest_here/*.zip ]; then
+  echo "[+] Decompressing payload.."
+  cd ingest_here/
+  mkdir {output_tmp,pdf_converted}
+  unzip *.zip -d output_tmp/
+  cd output_tmp/
+  find . -iname '*.doc*' | while read foo; do
+    filename="${foo%.*}"
+    filename=$(echo "$filename" | sed 's/\.\///g')
+    echo "[+] Converting $filename ...."
+    lowriter --convert-to doc "$filename"
+    # --print-to-file ../pdf_converted/"$filename".pdf
+  done
+  cd ..
+  zip -r pdf_converted_downloadable.zip pdf_converted
+  # rm -rf output_tmp/
+
+else
+  echo "[+] Payload not detected, cowardly refusing...."
+  exit
+fi
